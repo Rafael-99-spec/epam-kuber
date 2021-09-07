@@ -3,19 +3,19 @@ kind: Service
 metadata:
   name: minio-s3
   labels:
-    app: nginx
+    app: minio-s3
 spec:
   ports:
   - port: 80
     name: web
   clusterIP: None
   selector:
-    app: nginx
+    app: minio-s3
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: web
+  name: minio-s3
 spec:
   serviceName: "minio-s3"
   replicas: 3
