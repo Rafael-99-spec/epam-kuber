@@ -31,13 +31,17 @@ spec:
       containers:
         - name: minio
           image: minio/minio
-          args: ["server", "/data1"]
+          args: ["server", "/data1", "/data2", "/data3"]
           ports:
             - containerPort: 9000
           volumeMounts:
-            - name: minio
+            - name: minio-1
               mountPath: "/data1"
-              readOnly: false
+            - name: minio-2
+              mountPath: "/data2"
+            - name: minio-3
+              mountPath: "/data3"  
+              #readOnly: false
   volumeClaimTemplates:
     - metadata:
         name: minio
