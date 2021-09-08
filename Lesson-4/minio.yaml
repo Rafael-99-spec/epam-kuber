@@ -10,9 +10,7 @@ spec:
   ports:
     - name: minio
       port: 9000
-
 ---
-
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -20,8 +18,8 @@ metadata:
   labels:
     app: minio
 spec:
-  serviceName: "minio"
-  replicas: 4
+  serviceName: minio
+  replicas: 2
   selector:
     matchLabels:
       app: minio
@@ -29,65 +27,48 @@ spec:
     metadata:
       labels:
         app: minio
-        direct.csi.min.io/organization: minio
-        direct.csi.min.io/app: minio-example
-        direct.csi.min.io/tenant: tenant-1
     spec:
       containers:
-      - name: minio
-        image: minio/minio
-        env:
-        - name: MINIO_ACCESS_KEY
-          value: minio
-        - name: MINIO_SECRET_KEY
-          value: minio123
-        volumeMounts:
-        - name: minio-data-1
-          mountPath: /data1
-        - name: minio-data-2
-          mountPath: /data2
-        - name: minio-data-3
-          mountPath: /data3
-        - name: minio-data-4
-          mountPath: /data4
-        args:
-        - "server"
-        - "http://minio-{0...3}.minio.default.svc:9000/data{1...4}"
-  volumeClaimTemplates: # This is the specification in which you reference the StorageClass
-  - metadata:
-      name: minio-data-1
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      # selector: // claim Selector is not supported for dynamic provisioning
-      #   matchLabels: 
-      #     direct.csi.min.io/access-tier: "Hot"
-      #   matchExpressions:
-      #     - {key: direct.csi.min.io/access-tier, operator: In, values: [Hot]}
-      resources:
-        requests:
-          storage: 512Mi    
-      storageClassName: direct-csi-min-io # This field references the existing StorageClass
-  - metadata:
-      name: minio-data-2
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 512Mi  
-      storageClassName: direct-csi-min-io # This field references the existing StorageClass
-  - metadata:
-      name: minio-data-3
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 512Mi
-      storageClassName: direct-csi-min-io # This field references the existing StorageClass
-  - metadata:
-      name: minio-data-4
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 512Mi 
-      storageClassName: direct-csi-min-io # This field references the existing StorageClass
+        - name: minio
+          image: minio/minio
+          ports:
+           - containerPort: 9000
+          #args: ["server", "/data1", "/data2", "/data3"]
+      volumes:
+        - name: minio-0
+        - name: minio-1
+        #- name: minio-3
+          #volumeMounts:
+          #  - name: minio-1
+          #    mountPath: "/data1"
+          #  - name: minio-2
+          #    mountPath: "/data2"
+          #  - name: minio-3
+          #    mountPath: "/data3"  
+              #readOnly: false
+          #configMap:
+          #  name: www
+  volumeClaimTemplates:
+    - metadata:
+        name: minio-1
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 512Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: minio-2
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 512Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: minio-3
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 512Mi
