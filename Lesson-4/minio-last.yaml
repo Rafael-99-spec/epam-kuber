@@ -14,19 +14,19 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: minio-state
+  name: minio
   labels:
-    app: minio-state
+    app: minio
 spec:
-  serviceName: minio-state
+  serviceName: minio
   replicas: 1
   selector:
     matchLabels:
-      app: minio-state
+      app: minio
   template:
     metadata:
       labels:
-        app: minio-state
+        app: minio
     spec:
       containers:
         - name: minio
@@ -44,7 +44,23 @@ spec:
               #readOnly: false
   volumeClaimTemplates:
     - metadata:
-        name: minio
+        name: minio-1
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 512Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: minio-2
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 512Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: minio-3
       spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:
