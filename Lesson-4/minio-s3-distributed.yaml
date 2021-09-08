@@ -1,3 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minio-s3
+spec:
+  serviceName: "minio-s3"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: minio-s3
+  template:
+    metadata:
+      labels:
+        app: minio-s3
+    spec:
+      containers:
+      - name: minio
+        image: minio/minio
+        ports:
+          - containerPort: 9000
+            name: web
+        volumeMounts:
+          - name: www
+            mountPath: /usr/share/nginx/html
+            readOnly: false
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -11,36 +45,3 @@ spec:
   clusterIP: None
   selector:
     app: minio-s3
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: minio-s3
-spec:
-  serviceName: "minio-s3"
-  replicas: 3
-  selector:
-    matchLabels:
-      app: minio-store
-  template:
-    metadata:
-      labels:
-        app: minio-store
-    spec:
-      containers:
-      - name: minio
-        image: minio/minio
-        ports:
-        - containerPort: 80
-          name: web
-        volumeMounts:
-        - name: www
-          mountPath: /usr/share/nginx/html
-  volumeClaimTemplates:
-  - metadata:
-      name: www
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 1Gi
