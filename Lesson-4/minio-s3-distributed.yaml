@@ -102,4 +102,4 @@ spec:
       resources:
         requests:
           storage: 10Gi        
-      storageClassName: "minio-gp2" # This field references the existing StorageClass
+      #storageClassName: "minio-gp2" # This field references the existing StorageClass
