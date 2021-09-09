@@ -1,5 +1,5 @@
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
   name: minio
   labels:
@@ -19,7 +19,7 @@ metadata:
     app: minio
 spec:
   serviceName: minio
-  replicas: 2
+  replicas: 2 
   selector:
     matchLabels:
       app: minio
@@ -31,44 +31,47 @@ spec:
       containers:
         - name: minio
           image: minio/minio
+          #command: ["/bin/sh"]
+          args: [ "server", "/data0" ]
           ports:
            - containerPort: 9000
           #args: ["server", "/data1", "/data2", "/data3"]
-      volumes:
-        - name: minio-0
-        - name: minio-1
-        #- name: minio-3
-          #volumeMounts:
-          #  - name: minio-1
-          #    mountPath: "/data1"
+          volumeMounts:
+            - name: minio-0
+              mountPath: "/data0"
           #  - name: minio-2
           #    mountPath: "/data2"
           #  - name: minio-3
           #    mountPath: "/data3"  
               #readOnly: false
+      volumes:
+        - name: minio-0
+        #- name: minio-1
+        #- name: minio-2
+        #- name: minio-3
           #configMap:
           #  name: www
   volumeClaimTemplates:
     - metadata:
-        name: minio-1
+        name: minio-0
       spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
             storage: 512Mi
-  volumeClaimTemplates:
-    - metadata:
-        name: minio-2
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 512Mi
-  volumeClaimTemplates:
-    - metadata:
-        name: minio-3
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 512Mi
+  #volumeClaimTemplates:
+  #  - metadata:
+  #      name: minio-1
+  #    spec:
+  #      accessModes: [ "ReadWriteOnce" ]
+  #      resources:
+  #        requests:
+  #          storage: 512Mi
+  #volumeClaimTemplates:
+  #  - metadata:
+  #      name: minio-2
+  #    spec:
+  #      accessModes: [ "ReadWriteOnce" ]
+  #      resources:
+  #        requests:
+  #          storage: 512Mi
